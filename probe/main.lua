@@ -13,6 +13,13 @@
 --   (harness-entry sets XDG_DATA_HOME to one that does).
 --   An error inside love.draw shows the error screen forever unless
 --   love.errhand is replaced; love.event.push("q") quits.
+--
+-- Findings on 0.8.0:
+--   love._version is the string "0.8.0"; still no love.getVersion.
+--   ImageData:encode(name) writes a real PNG straight to the save directory,
+--   named exactly as given (encode("png") writes a file called "png"), the
+--   right way up, and returns nothing.
+--   love.event.quit exists. Still Lua 5.1, no LuaJIT.
 local function p(...) print(...) io.stdout:flush() end
 local function has(path)
 	local t = _G
@@ -50,13 +57,19 @@ function love.draw()
 		local shot = love.graphics.newScreenshot()
 		p("shot", type(shot), shot:getWidth(), shot:getHeight(), shot:getPixel(20, 20))
 		local ok, res = pcall(function() return shot:encode("png") end)
-		p("encode('png')", ok, type(res), ok and res.getSize and res:getSize() or tostring(res))
+		p("encode('png')", ok, type(res), ok and res and res.getSize and res:getSize() or tostring(res))
+		p("encode wrote a file called png", love.filesystem.exists and love.filesystem.exists("png") or "?")
 		if ok and res then
 			for _, m in ipairs({"getString", "getPointer", "getSize", "typeOf", "type"}) do p("data method", m, tostring(res[m] ~= nil)) end
 			p("fs.write", pcall(love.filesystem.write, "encode-png.bin", res))
 			p("savedir", love.filesystem.getSaveDirectory())
 		end
-		p("quitting via push q")
-		love.event.push("q")
+		if love.event.quit then
+			p("quitting via love.event.quit")
+			love.event.quit()
+		else
+			p("quitting via push q")
+			love.event.push("q")
+		end
 	end
 end

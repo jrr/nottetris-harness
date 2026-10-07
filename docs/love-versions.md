@@ -44,10 +44,16 @@ harness actually hits.
   unverified*; the changelog only says "Updated Box2D to version 2.2.1").
   The game builds every piece from `newRectangleShape(body, …)` and
   `newPolygonShape(body, …)`, uses `shape:setData`, and calls
-  `newWorld(0, -720, 960, 1200, 0, 500, true)` with bounds.
-- `love.event.quit` added; `love.event.push("q")` goes away later
+  `newWorld(0, -720, 960, 1200, 0, 500, true)` with bounds. Verified so far:
+  on 0.8.0 the game's first `newPolygonShape(body, …)` fails with "Number of
+  vertices must be a multiple of two", so shapes no longer take a body.
+- `love.event.quit` added (verified); `love.event.push("q")` goes away later
   (*unverified when*). The game uses `push("q")`.
-- `ImageData:encode` now writes straight to a file (harness screenshots).
+- `ImageData:encode(filename)` writes a real PNG straight to the save
+  directory and returns nothing (harness screenshots; verified by the probe).
+- `love._version` becomes a string, `"0.8.0"` (verified).
+- The menus render pixel-identically to 0.7.2 (verified by the boot
+  scenario).
 - `love.timer.sleep` takes seconds; `love.run` order changes.
 - `require` with a `.lua` extension removed.
 
@@ -92,7 +98,7 @@ harness actually hits.
 
 ## Lua runtime
 
-The 0.7.2 build in the harness runs plain Lua 5.1 (the probe reports `jit`
-as nil). Later releases bundle LuaJIT on most platforms. When that started,
-and whether our source builds use it, is *unverified*; the probe reports it
-for each version.
+The 0.7.2 and 0.8.0 builds in the harness run plain Lua 5.1 (the probe
+reports `jit` as nil). Later releases bundle LuaJIT on most platforms. When
+that started, and whether our source builds use it, is *unverified*; the
+probe reports it for each version.
