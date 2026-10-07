@@ -1,0 +1,12 @@
+gamestate gameB
+score 900 level 0 lines 9
+body 1 kind 3 pos 224.000 245.336 angle 0.0000 vel 0.000 106.923
+body 2 kind 6 pos 322.634 544.137 angle -0.0008 vel 0.000 0.000
+body 3 kind 7 pos 223.214 544.123 angle -0.0019 vel -0.000 -0.000
+body 4 kind 2 pos 224.554 512.190 angle -0.0038 vel -0.000 -0.000
+body 5 kind 3 pos 275.194 473.799 angle 0.9268 vel -0.000 -0.000
+body 6 kind 6 pos 352.007 464.160 angle 1.5717 vel 0.000 0.000
+body 7 kind 2 pos 259.149 425.891 angle -0.6453 vel -0.000 0.000
+body 8 kind 4 pos 129.686 544.149 angle -4.7124 vel 0.000 0.000
+body 9 kind 4 pos 95.849 480.295 angle -3.1416 vel 0.000 -0.000
+body 10 kind 5 pos 158.105 452.495 angle -0.8846 vel -0.000 -0.000
