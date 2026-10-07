@@ -2,20 +2,24 @@
 # Plays scenarios headless against one LÖVE version and compares the output
 # (screenshots, state dumps and the game's own save files) to a baseline.
 #
-#   ./run.sh [--love 0.7.2] [--game DIR] [--update] [scenario...]
+#   ./run.sh [--love VERSION] [--game DIR] [--update] [scenario...]
 #
-# DIR defaults to game/, the jrr/nottetris2 submodule; pass another checkout
-# to test work in progress there.
+# VERSION defaults to the one the baselines were made with
+# (expected/love-version). DIR defaults to game/, the jrr/nottetris2
+# submodule; pass another checkout to test work in progress there.
 #
 # Output for each scenario lands in out/<love>/<scenario>/: log.txt and
 # files/ (PNG screenshots and text dumps). --update copies files/ and their
-# checksums to expected/<love>/<scenario>/ as the new baseline; normal runs
-# compare checksums, and the baseline files are there to look at when they
-# differ.
+# checksums to expected/<scenario>/ as the new baseline; normal runs compare
+# checksums, and the baseline files are there to look at when they differ.
+#
+# Baselines keep the same paths across LÖVE versions, so a commit that moves
+# them to a new version shows every screenshot as a before/after image diff.
 set -u
 cd "$(dirname "$0")"
 ROOT=$(pwd)
-LOVE=0.7.2
+BASELINE_LOVE=$(cat expected/love-version 2>/dev/null)
+LOVE=$BASELINE_LOVE
 GAME=$ROOT/game
 UPDATE=0
 SCENARIOS=()
@@ -27,8 +31,21 @@ while [ $# -gt 0 ]; do
 		*) SCENARIOS+=("${1%.lua}"); shift ;;
 	esac
 done
+ALL=0
 if [ ${#SCENARIOS[@]} -eq 0 ]; then
 	SCENARIOS=($(ls scenarios | sed 's/\.lua$//'))
+	ALL=1
+fi
+if [ -z "$LOVE" ]; then
+	echo "No baselines yet: pass --love VERSION" >&2
+	exit 1
+fi
+if [ "$LOVE" != "$BASELINE_LOVE" ]; then
+	if [ $UPDATE -eq 1 ] && [ $ALL -eq 0 ]; then
+		echo "Baselines are from LÖVE $BASELINE_LOVE: moving them to $LOVE means updating every scenario, so don't name any" >&2
+		exit 1
+	fi
+	[ $UPDATE -eq 1 ] || echo "Note: baselines are from LÖVE $BASELINE_LOVE, running $LOVE"
 fi
 IMAGE=nottetris-love:$LOVE
 
@@ -58,7 +75,7 @@ run_one() {
 		grep -A12 'ERROR\|TIMEOUT\|FAILED' "$work/log.txt" | head -20
 		return 1
 	fi
-	local baseline=expected/$LOVE/$name
+	local baseline=expected/$name
 	local expected=$baseline/checksums.txt
 	if [ $UPDATE -eq 1 ]; then
 		rm -rf "$baseline" && mkdir -p "$baseline"
@@ -86,4 +103,7 @@ for i in "${!pids[@]}"; do
 	cat "$ROOT/out/.${SCENARIOS[$i]}.result"
 	rm -f "$ROOT/out/.${SCENARIOS[$i]}.result"
 done
+if [ $UPDATE -eq 1 ] && [ $status -eq 0 ]; then
+	echo "$LOVE" > expected/love-version
+fi
 exit $status
