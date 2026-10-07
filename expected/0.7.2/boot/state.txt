@@ -1,0 +1,2 @@
+gamestate menu
+score nil level nil lines nil

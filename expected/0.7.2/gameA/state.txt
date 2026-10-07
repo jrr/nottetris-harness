@@ -1,0 +1,6 @@
+gamestate gameA
+score 0 level 0 lines 0
+body 1 kind 3 pos 224.000 15.267 angle 0.0000 vel 0.000 93.367
+body 2 kind 6 pos 91.629 533.231 angle 1.1008 vel 0.000 0.000
+body 3 kind 7 pos 224.220 544.052 angle 0.0022 vel 0.000 0.000
+body 4 kind 2 pos 224.484 512.128 angle 0.0039 vel 0.000 0.000

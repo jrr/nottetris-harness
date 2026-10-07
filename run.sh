@@ -8,8 +8,10 @@
 # to test work in progress there.
 #
 # Output for each scenario lands in out/<love>/<scenario>/: log.txt and
-# files/ (PNG screenshots and text dumps). Baselines live in
-# expected/<love>/<scenario>.txt as checksums of files/.
+# files/ (PNG screenshots and text dumps). --update copies files/ and their
+# checksums to expected/<love>/<scenario>/ as the new baseline; normal runs
+# compare checksums, and the baseline files are there to look at when they
+# differ.
 set -u
 cd "$(dirname "$0")"
 ROOT=$(pwd)
@@ -56,16 +58,18 @@ run_one() {
 		grep -A12 'ERROR\|TIMEOUT\|FAILED' "$work/log.txt" | head -20
 		return 1
 	fi
-	local expected=expected/$LOVE/$name.txt
+	local baseline=expected/$LOVE/$name
+	local expected=$baseline/checksums.txt
 	if [ $UPDATE -eq 1 ]; then
-		mkdir -p "expected/$LOVE" && cp "$work/checksums.txt" "$expected"
+		rm -rf "$baseline" && mkdir -p "$baseline"
+		cp "$work"/files/* "$work/checksums.txt" "$baseline/"
 		echo "UPDATED $name"
 	elif [ ! -f "$expected" ]; then
 		echo "NO BASELINE $name (rerun with --update to accept out/$LOVE/$name/files)"
 	elif diff -q "$expected" "$work/checksums.txt" > /dev/null; then
 		echo "PASS $name"
 	else
-		echo "DIFF $name"
+		echo "DIFF $name (compare $baseline/ with out/$LOVE/$name/files/)"
 		diff "$expected" "$work/checksums.txt" | grep '^[<>]'
 		return 1
 	fi
