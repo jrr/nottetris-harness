@@ -1,0 +1,4 @@
+[submodule "game"]
+	path = game
+	url = https://github.com/jrr/nottetris2
+	branch = main
