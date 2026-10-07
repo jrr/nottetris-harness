@@ -28,15 +28,23 @@ Otherwise it passes when the output's checksums match `expected/<scenario>/`.
 ## Playing by hand
 
 ```
-./play.sh                     # same LÖVE version and game as run.sh
+./play.sh                     # VNC, same LÖVE version and game as run.sh
+./play.sh --web               # in the browser, with sound
 ./play.sh --love 0.7.2 --game ../nottetris2
 ./play.sh --stop
 ```
 
-The game runs in the same Linux container as the scenarios, with a VNC
-server sharing its screen, and macOS Screen Sharing opens on it (password
-`love`; the port only listens on localhost). No sound. This works for
-versions that have no macOS build that runs on Apple Silicon, 0.7.2 included.
+The game runs in the same Linux container as the scenarios, so this works
+for versions with no macOS build that runs on Apple Silicon, 0.7.2 included.
+Both listen on localhost only.
+
+- **VNC** (default): a VNC server shares the game's screen and macOS Screen
+  Sharing opens on it (password `love`). Light, but no sound.
+- **`--web`**: [Selkies](https://github.com/selkies-project/selkies) streams
+  the game with sound to a browser tab at http://localhost:8080. It runs the
+  display and sound server in its own container, which the game's container
+  connects to, so the version images need nothing for it. The game starts
+  once the tab has connected. Downloads a 2.4 GB image the first time.
 
 ## Layout
 
@@ -45,7 +53,7 @@ versions that have no macOS build that runs on Apple Silicon, 0.7.2 included.
 | `game/` | submodule: jrr/nottetris2, `main` branch |
 | `docker/love-<version>.Dockerfile` | LÖVE built for Xvfb and software rendering |
 | `docker/entry.sh` | runs in the container: play the game, collect its save files |
-| `docker/play.*` | VNC layer on top of any version's image, for `play.sh` |
+| `docker/play.*` | VNC layer on top of any version's image, for `play.sh` (`--web` needs none) |
 | `lua/harness_main.lua` | fixed clock, seed and keyboard; plays the scenario steps |
 | `lua/harness_compat.lua` | everything that differs between LÖVE versions |
 | `scenarios/*.lua` | the scenarios; step format at the top of `harness_main.lua` |
