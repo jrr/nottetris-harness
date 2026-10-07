@@ -25,6 +25,19 @@ Each scenario's output goes to `out/<love>/<scenario>/`: `log.txt`, and
 A scenario fails if the game errors, times out, or an `expect` step fails.
 Otherwise it passes when the output's checksums match `expected/<scenario>/`.
 
+## Playing by hand
+
+```
+./play.sh                     # same LÖVE version and game as run.sh
+./play.sh --love 0.7.2 --game ../nottetris2
+./play.sh --stop
+```
+
+The game runs in the same Linux container as the scenarios, with a VNC
+server sharing its screen, and macOS Screen Sharing opens on it (password
+`love`; the port only listens on localhost). No sound. This works for
+versions that have no macOS build that runs on Apple Silicon, 0.7.2 included.
+
 ## Layout
 
 | Path | |
@@ -32,6 +45,7 @@ Otherwise it passes when the output's checksums match `expected/<scenario>/`.
 | `game/` | submodule: jrr/nottetris2, `main` branch |
 | `docker/love-<version>.Dockerfile` | LÖVE built for Xvfb and software rendering |
 | `docker/entry.sh` | runs in the container: play the game, collect its save files |
+| `docker/play.*` | VNC layer on top of any version's image, for `play.sh` |
 | `lua/harness_main.lua` | fixed clock, seed and keyboard; plays the scenario steps |
 | `lua/harness_compat.lua` | everything that differs between LÖVE versions |
 | `scenarios/*.lua` | the scenarios; step format at the top of `harness_main.lua` |
