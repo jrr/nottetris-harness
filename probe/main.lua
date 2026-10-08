@@ -39,6 +39,18 @@
 --   "space" (text input still gets " ").
 --   Window flags: fsaa is now msaa, and fullscreentype defaults to "desktop"
 --   (0.9: "normal").
+--
+-- Findings on 11.3:
+--   love.errorhandler replaces love.errhand. Key events as on 0.10.
+--   love.graphics.newScreenshot is gone. captureScreenshot(callback) hands
+--   over the ImageData once the frame is presented, before the next update;
+--   captureScreenshot(filename) writes a PNG to the save directory itself.
+--   Colors are 0-1: setColor(255, 0, 0) is clamped, and getPixel returns
+--   1, 0, 0, 1.
+--   love.audio.newSource needs a type ("static" or "stream").
+--   love.audio.resume is gone (love.audio.pause returns the sources it
+--   paused, for love.audio.play). love.filesystem.getInfo is new; exists
+--   remains. math.mod still exists, as this build is plain Lua 5.1.
 local function p(...) print(...) io.stdout:flush() end
 local function major_minor_at_least(major, minor)
 	if not love.getVersion then return false end
@@ -59,6 +71,7 @@ love.errhand = function(msg)
 	p(debug.traceback())
 	os.exit(1)
 end
+love.errorhandler = love.errhand --11.0's name for it
 
 function love.load()
 	p("_version", tostring(love._version), "major", tostring(love._version_major), "minor", tostring(love._version_minor), "rev", tostring(love._version_revision))
@@ -70,10 +83,15 @@ function love.load()
 		"love.graphics.setMode", "love.graphics.getModes", "love.graphics.getWidth",
 		"love.window", "love.window.setMode", "love.window.getMode", "love.window.getFullscreenModes",
 		"love.window.getDesktopDimensions", "love.window.setFullscreen",
-		"love.keyboard.setKeyRepeat", "love.keyboard.setTextInput", "socket"}) do
+		"love.keyboard.setKeyRepeat", "love.keyboard.setTextInput", "socket",
+		"love.filesystem.getInfo", "love.audio.pause", "love.audio.resume", "math.mod", "math.fmod"}) do
 		p("api", f, has(f))
 	end
 	p("lua", _VERSION, "jit", tostring(jit and jit.version))
+	if love.audio then
+		local ok, res = pcall(love.audio.newSource, "probe.wav")
+		p("newSource without type", ok, tostring(res))
+	end
 end
 
 -- Which arguments the key callbacks get from real (pushed) events.
@@ -105,10 +123,30 @@ function love.update(dt)
 		end
 	end
 end
+local function quit()
+	if love.event.quit then
+		p("quitting via love.event.quit")
+		love.event.quit()
+	else
+		p("quitting via push q")
+		love.event.push("q")
+	end
+end
 function love.draw()
 	love.graphics.setColor(255, 0, 0)
 	love.graphics.rectangle("fill", 10, 10, 100, 50)
-	if frames == 5 then
+	if frames == 5 and not love.graphics.newScreenshot then
+		-- 11.0: the screenshot arrives after the frame is drawn
+		love.graphics.captureScreenshot(function(shot)
+			p("captureScreenshot", type(shot), shot:getWidth(), shot:getHeight(), shot:getPixel(20, 20))
+			local ok, res = pcall(function() return shot:encode("png", "probe2.png") end)
+			p("encode('png', 'probe2.png')", ok, type(res), tostring(res), "exists", tostring(love.filesystem.getInfo("probe2.png") ~= nil))
+		end)
+		love.graphics.captureScreenshot("probe3.png")
+	elseif frames == 7 and not love.graphics.newScreenshot then
+		p("captureScreenshot('probe3.png') wrote", tostring(love.filesystem.getInfo("probe3.png") ~= nil))
+		quit()
+	elseif frames == 5 then
 		local shot = love.graphics.newScreenshot()
 		p("shot", type(shot), shot:getWidth(), shot:getHeight(), shot:getPixel(20, 20))
 		local ok, res = pcall(function() return shot:encode("png") end)
@@ -123,12 +161,6 @@ function love.draw()
 			p("fs.write", pcall(love.filesystem.write, "encode-png.bin", res))
 			p("savedir", love.filesystem.getSaveDirectory())
 		end
-		if love.event.quit then
-			p("quitting via love.event.quit")
-			love.event.quit()
-		else
-			p("quitting via push q")
-			love.event.push("q")
-		end
+		quit()
 	end
 end
