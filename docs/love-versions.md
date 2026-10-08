@@ -29,7 +29,7 @@ Official Linux binaries were Ubuntu .deb packages for i386/amd64 (armhf from
 0.10.2), then x86_64 AppImages from 11.0. None are arm64. The harness builds
 LÖVE from source in an arm64 Linux container instead, so the macOS column only
 matters for playing the game by hand. Building from source is verified for
-0.7.2 (on Ubuntu 16.04).
+0.7.2, 0.8.0 and 0.9.2 (on Ubuntu 16.04).
 
 ## Breaking changes that touch this game
 
@@ -60,11 +60,23 @@ harness actually hits.
 ### 0.9.0
 
 - Window functions move from `love.graphics` to `love.window`; `t.screen`
-  becomes `t.window` in `conf.lua`. The game calls `love.graphics.setMode` 9
-  times and reads `love.graphics.getModes()` to size itself.
-- `love.keypressed(key, unicode)` becomes `(key, isrepeat)`; text input moves
-  to the new `love.textinput`. The high score name entry uses `unicode`.
-- `love.timer.getMicroTime` removed; `getTime` becomes high-resolution.
+  becomes `t.window` in `conf.lua` (verified: `love.graphics.setMode` and
+  `getModes` are gone). The game calls `love.graphics.setMode` 10 times and
+  reads `love.graphics.getModes()` to size itself. `love.graphics.getWidth`
+  and `getHeight` stay.
+- A `conf.lua` that still sets `t.screen.*` stops 0.9.2 before `main.lua`
+  runs, and it hangs on its error screen without printing anything, so a
+  harness run just times out (verified).
+- `love.keypressed(key, unicode)` becomes `(key, isrepeat)`, `keyreleased`
+  gets just the key, and typed text arrives separately in the new
+  `love.textinput(text)` (verified with pushed events). The high score name
+  entry uses `unicode`.
+- `love.timer.getMicroTime` removed (verified); `getTime` becomes
+  high-resolution.
+- `ImageData:encode(filename)` still writes a PNG and returns nothing, but
+  takes the format from the name's extension: `encode("png")` is an error
+  (harness; verified).
+- `love.getVersion()` added (verified on 0.9.2; the changelog says 0.9.1).
 - `love.filesystem.mkdir` and `enumerate` renamed; the save directory is now
   created automatically.
 - SDL 1.2 → SDL2 (the macOS build bundles `SDL2.framework` from 0.9).
@@ -98,7 +110,8 @@ harness actually hits.
 
 ## Lua runtime
 
-The 0.7.2 and 0.8.0 builds in the harness run plain Lua 5.1 (the probe
-reports `jit` as nil). Later releases bundle LuaJIT on most platforms. When
-that started, and whether our source builds use it, is *unverified*; the
-probe reports it for each version.
+The harness's builds run plain Lua 5.1 (the probe reports `jit` as nil).
+0.9 onwards prefer LuaJIT, and LÖVE's own builds bundle it on most platforms,
+but Ubuntu 16.04 has no arm64 LuaJIT package, so the 0.9.2 image is built
+`--with-lua=lua5.1`. The game hits no difference between the two until
+11.4's LuaJIT 2.1 (below).
