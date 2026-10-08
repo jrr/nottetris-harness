@@ -112,6 +112,16 @@ Checked on 11.3, the last release before 11.4's LuaJIT change.
   warning and hangs harness runs (verified).
 - **Colors are 0–1 instead of 0–255.** Every `setColor` and
   `setBackgroundColor` call changes; values above 1 are clamped (verified).
+  So do ImageData's `getPixel` and `setPixel`, which the game uses to tint
+  and cut pieces (verified). Two of the game's colours render one level
+  higher in green than on 0.10.2 (the source images are a level lower
+  still); nothing else in the screenshots changes (verified).
+- `World:update` steps Box2D with 8 velocity and 3 position iterations by
+  default, where every earlier version used 8 and 6 (verified in LÖVE's
+  source). Pieces settle differently; `world:update(dt, 8, 6)` gives
+  exactly 0.10.2's physics (verified).
+- `newImageFont` no longer takes an Image, only a filename, ImageData or
+  Rasterizer; the filter is set on the Font instead (verified).
 - `love.audio.newSource` needs an explicit type (`"static"` / `"stream"`)
   (verified). `love.audio.resume` is gone; `love.audio.pause()` returns the
   sources it paused, to pass to `love.audio.play` (verified).
@@ -121,7 +131,8 @@ Checked on 11.3, the last release before 11.4's LuaJIT change.
 - `love.errhand` renamed to `love.errorhandler` (harness; verified).
 - Key events are unchanged from 0.10 (verified).
 - `love.filesystem.exists` deprecated in favour of `getInfo`; both exist on
-  11.3 (verified).
+  11.3, but calling a deprecated function prints a warning across the bottom
+  of the game's window (verified).
 - The macOS build is still Intel-only.
 
 ### 11.4
