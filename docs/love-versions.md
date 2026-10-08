@@ -29,7 +29,7 @@ Official Linux binaries were Ubuntu .deb packages for i386/amd64 (armhf from
 0.10.2), then x86_64 AppImages from 11.0. None are arm64. The harness builds
 LÖVE from source in an arm64 Linux container instead, so the macOS column only
 matters for playing the game by hand. Building from source is verified for
-0.7.2, 0.8.0 and 0.9.2 (on Ubuntu 16.04).
+0.7.2, 0.8.0, 0.9.2 and 0.10.2 (on Ubuntu 16.04).
 
 ## Breaking changes that touch this game
 
@@ -83,13 +83,26 @@ harness actually hits.
 
 ### 0.10.0
 
+- A game whose `conf.lua` asks for an older `t.version` gets a modal
+  compatibility warning before `main.lua` runs. Under the harness nobody can
+  dismiss it, so every run times out with an empty log (verified).
 - `love.keypressed(key, scancode, isrepeat)`; the space key is `"space"`
-  instead of `" "`. The name entry whitelist includes space.
+  instead of `" "`, though `textinput` still gets `" "` (verified with
+  pushed events). The game never uses the space key, and the name entry
+  takes space through `textinput`.
 - Mouse buttons become numbers.
-- `ImageData:encode(format, filename)` returns a FileData (harness).
-- ImageFonts no longer treat separator pixels as spacing. The game draws its
-  text with image fonts, so text layout may shift.
-- Requires OpenGL 2.1.
+- `ImageData:encode(format, filename)` writes the file and returns a
+  FileData; 0.8's `encode(filename)` is an error (harness; verified). Its
+  PNGs carry a `gAMA` chunk, which the harness strips so identical frames
+  give identical files across versions.
+- ImageFonts no longer add a pixel between glyphs: text comes out 1 pixel
+  per character narrower (verified). The game prints its menu selections
+  over text baked into the menu images, so the old text showed past the end
+  of the new; `newImageFont`'s new `extraspacing` argument of 1 restores the
+  old layout pixel for pixel.
+- The window flag `fsaa` is renamed `msaa`, and fullscreen defaults to
+  `fullscreentype = "desktop"` instead of 0.9's `"normal"` (verified).
+- Requires OpenGL 2.1 (Mesa's software renderer is fine).
 
 ### 11.0
 
