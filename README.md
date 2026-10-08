@@ -26,13 +26,15 @@ Each scenario's output goes to `out/<love>/<scenario>/`: `log.txt`, and
 A scenario fails if the game errors, times out, or an `expect` step fails.
 Otherwise it passes when the output's checksums match `expected/<scenario>/`.
 
+Both `run.sh` and `play.sh` run the game on the LÖVE version its `conf.lua`
+asks for (0.7.2 if it doesn't say), unless `--love` says otherwise.
+
 `--ref` (for `run.sh` and `play.sh`) takes the game from a tag, branch or
-commit of the game repo instead, and runs it on the LÖVE version its
-`conf.lua` asks for: 0.7.2 if it doesn't say. The baselines only describe the
-current game, so these runs check behavior only: nothing errors, every
-`expect` passes. Each finished port is tagged in the game repo (e.g.
-`release-2011-06-20` for the original), so earlier versions stay playable:
-`./play.sh --ref release-2011-06-20`.
+commit of the game repo instead; a branch can be one that's only on GitHub.
+The baselines only describe the current game, so these runs check behavior
+only: nothing errors, every `expect` passes. Each finished port is tagged in
+the game repo (e.g. `release-2011-06-20` for the original), so earlier
+versions stay playable: `./play.sh --ref release-2011-06-20`.
 
 ## Playing by hand
 
@@ -75,7 +77,7 @@ Both listen on localhost only.
 | `lua/harness_compat.lua` | everything that differs between LÖVE versions |
 | `scenarios/*.lua` | the scenarios; step format at the top of `harness_main.lua` |
 | `expected/` | baselines, and `love-version`, the version they were made with |
-| `lib/ref.sh` | `--ref`: export the game at a ref, find the LÖVE version it wants |
+| `lib/ref.sh` | `--ref`: export the game at a ref; the LÖVE version a game wants |
 | `probe/` | reports which APIs a LÖVE version has |
 
 ## Reviewing a port
