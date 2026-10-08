@@ -74,6 +74,7 @@ on the LÖVE version it was made for, and the current harness runs them all
 | `release-2011-06-20` | 0.7.2 | `./play.sh --web --ref release-2011-06-20` | The original release (game repo only). No `--mac`. |
 | `love-0.8.0` | 0.8.0 | `./play.sh --mac --ref love-0.8.0` | Box2D 2.2. |
 | `love-0.9.2` | 0.9.2 | `./play.sh --mac --ref love-0.9.2` | Box2D 2.3, SDL2. |
+| `love-0.10.2` | 0.10.2 | `./play.sh --mac --ref love-0.10.2` | Image fonts need `extraspacing`; borderless fullscreen. |
 
 ## Layout
 

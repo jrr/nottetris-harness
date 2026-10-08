@@ -30,7 +30,21 @@
 --   Key events: keypressed(key, isrepeat), keyreleased(key), and typed text
 --   arrives separately in textinput(text).
 --   Lua 5.1 here only because Ubuntu 16.04 has no arm64 LuaJIT package.
+--
+-- Findings on 0.10.2:
+--   ImageData:encode(format, filename) writes the file and returns a
+--   FileData; encode(filename) is now an error. encode("png") returns the
+--   PNG as FileData without writing anything.
+--   Key events: keypressed(key, scancode, isrepeat); the space bar is
+--   "space" (text input still gets " ").
+--   Window flags: fsaa is now msaa, and fullscreentype defaults to "desktop"
+--   (0.9: "normal").
 local function p(...) print(...) io.stdout:flush() end
+local function major_minor_at_least(major, minor)
+	if not love.getVersion then return false end
+	local ma, mi = love.getVersion()
+	return ma > major or (ma == major and mi >= minor)
+end
 local function has(path)
 	local t = _G
 	for part in path:gmatch("[^.]+") do
@@ -82,8 +96,13 @@ function love.update(dt)
 		if love.window and love.window.getDesktopDimensions then
 			p("desktop", love.window.getDesktopDimensions())
 		end
-		pcall(love.event.push, "keypressed", "a", false)
-		pcall(love.event.push, "textinput", "a")
+		if major_minor_at_least(0, 10) then
+			pcall(love.event.push, "keypressed", "space", "space", false)
+			pcall(love.event.push, "textinput", " ")
+		else
+			pcall(love.event.push, "keypressed", "a", false)
+			pcall(love.event.push, "textinput", "a")
+		end
 	end
 end
 function love.draw()
@@ -96,6 +115,8 @@ function love.draw()
 		p("encode('png')", ok, type(res), ok and res and res.getSize and res:getSize() or tostring(res))
 		local ok2, res2 = pcall(function() return shot:encode("probe.png") end)
 		p("encode('probe.png')", ok2, type(res2), tostring(res2), "exists", tostring(love.filesystem.exists and love.filesystem.exists("probe.png")))
+		local ok3, res3 = pcall(function() return shot:encode("png", "probe2.png") end)
+		p("encode('png', 'probe2.png')", ok3, type(res3), tostring(res3), "exists", tostring(love.filesystem.exists and love.filesystem.exists("probe2.png")))
 		p("encode wrote a file called png", love.filesystem.exists and love.filesystem.exists("png") or "?")
 		if ok and res then
 			for _, m in ipairs({"getString", "getPointer", "getSize", "typeOf", "type"}) do p("data method", m, tostring(res[m] ~= nil)) end
