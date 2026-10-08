@@ -1,4 +1,4 @@
 c78da365a23f0a2885db26e1aedc04096e549f0b  01_falling.png
-1eff324e323bb93275bb91ee70fbab9cb09e6eff  02_landed.png
+beeaf3842d97b14a52c3c5b86653a5c363a6b43e  02_landed.png
 f5e0e4e08da4963d466e137370ede636e811a42b  highscoresA.txt
 86cb0984a4ff0531f27ed881c3b06baf0767a74e  options.txt
