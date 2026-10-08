@@ -6,7 +6,8 @@ local function place(kind, x, y)
 	local id = highestbody() + 1
 	createtetriA(kind, id, x, y)
 	for _, shape in pairs(tetrishapes[id]) do
-		shape:setData({id})
+		local setdata = shape.setUserData or shape.setData --a fixture from 0.8 on
+		setdata(shape, {id})
 	end
 end
 

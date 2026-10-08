@@ -1,6 +1,6 @@
 gamestate gameA
 score 0 level 0 lines 0
-body 1 kind 3 pos 224.000 15.267 angle 0.0000 vel 0.000 93.367
-body 2 kind 6 pos 91.629 533.231 angle 1.1008 vel 0.000 0.000
-body 3 kind 7 pos 224.220 544.052 angle 0.0022 vel 0.000 0.000
-body 4 kind 2 pos 224.484 512.128 angle 0.0039 vel 0.000 0.000
+body 1 kind 3 pos 224.000 16.948 angle 0.0000 vel 0.000 100.852
+body 2 kind 6 pos 97.878 527.436 angle 1.5698 vel 0.000 0.000
+body 3 kind 7 pos 225.259 543.398 angle 0.0033 vel 0.001 -0.000
+body 4 kind 2 pos 228.194 510.735 angle 0.0084 vel 1.357 0.005

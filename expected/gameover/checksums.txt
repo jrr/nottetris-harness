@@ -1,6 +1,6 @@
-53642adecfdfaf742fcd6b2e70b70e52cdb75b4a  01_failing.png
-a17c41a46e991b8f99313dfbfb94f44d8cc889fe  02_failed.png
-3b9b2575ff1c793cebca4a51dc9db20c0286d647  03_highscore.png
-b41401856c62afd324255a7efac1cb141599e02e  04_menu.png
-1dfb5219a58b3ae2c51779849ed07f57f29bccb2  highscoresA.txt
+7048f19f8107d3d3463ccd18d8bf109462793eda  01_failing.png
+b86d5500c1d0707fe3f08028ddbe135dbe175656  02_failed.png
+0c0f3468ab652049b14b0c56e0f162c0c324341a  03_highscore.png
+9d27f07666db595d9ecfad861eee170ad85de5ce  04_menu.png
+e182aeff6371c9dc4819fe9df74453ba66b63fb2  highscoresA.txt
 86cb0984a4ff0531f27ed881c3b06baf0767a74e  options.txt

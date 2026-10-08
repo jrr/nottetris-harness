@@ -23,25 +23,34 @@ compat.version = string.format("%d.%d.%d", major, minor, rev)
 -- 0.7.2 -> "0.7", 11.5 -> "11"
 compat.era = major == 0 and ("0." .. minor) or tostring(major)
 
+local function era(...)
+	for _, e in ipairs({...}) do
+		if compat.era == e then
+			return true
+		end
+	end
+	return false
+end
+
 local function unsupported(what)
 	error("harness: " .. what .. " not yet verified on LÖVE " .. compat.version, 2)
 end
 
--- Error handler: verified 0.7.
+-- Error handler: verified 0.7, 0.8.
 function compat.onerror(fn)
-	if compat.era == "0.7" then
+	if era("0.7", "0.8") then
 		love.errhand = fn
 	else
 		unsupported("onerror")
 	end
 end
 
--- Deliver a key press to the game's own callback: verified 0.7.
+-- Deliver a key press to the game's own callback: verified 0.7, 0.8.
 function compat.keypressed(key)
 	if not love.keypressed then
 		return
 	end
-	if compat.era == "0.7" then
+	if era("0.7", "0.8") then
 		local unicode = #key == 1 and key:byte() or (key == "return" and 13 or 0)
 		love.keypressed(key, unicode)
 	else
@@ -53,7 +62,7 @@ function compat.keyreleased(key)
 	if not love.keyreleased then
 		return
 	end
-	if compat.era == "0.7" then
+	if era("0.7", "0.8") then
 		local unicode = #key == 1 and key:byte() or (key == "return" and 13 or 0)
 		love.keyreleased(key, unicode)
 	else
@@ -62,21 +71,26 @@ function compat.keyreleased(key)
 end
 
 -- Save what has been drawn so far this frame. Call at the end of love.draw,
--- before the frame is presented. Verified 0.7, where encode() writes
--- uncompressed TGA whatever format is asked for; the container converts it.
+-- before the frame is presented. Verified 0.7, where encode() returns
+-- uncompressed TGA whatever format is asked for (the container converts it),
+-- and 0.8, where encode(filename) writes a PNG itself.
 function compat.screenshot(name)
 	if compat.era == "0.7" then
 		local data = love.graphics.newScreenshot():encode("tga")
 		love.filesystem.write(name .. ".tga", data)
+	elseif compat.era == "0.8" then
+		love.graphics.newScreenshot():encode(name .. ".png")
 	else
 		unsupported("screenshot")
 	end
 end
 
--- Verified 0.7.
+-- Verified 0.7, 0.8.
 function compat.quit()
 	if compat.era == "0.7" then
 		love.event.push("q")
+	elseif compat.era == "0.8" then
+		love.event.quit()
 	else
 		unsupported("quit")
 	end
