@@ -36,23 +36,31 @@ local function unsupported(what)
 	error("harness: " .. what .. " not yet verified on LÖVE " .. compat.version, 2)
 end
 
--- Error handler: verified 0.7, 0.8.
+-- Error handler: verified 0.7, 0.8, 0.9.
 function compat.onerror(fn)
-	if era("0.7", "0.8") then
+	if era("0.7", "0.8", "0.9") then
 		love.errhand = fn
 	else
 		unsupported("onerror")
 	end
 end
 
--- Deliver a key press to the game's own callback: verified 0.7, 0.8.
+-- Deliver a key press to the game's own callbacks: verified 0.7, 0.8, 0.9.
+-- 0.7 and 0.8 pass the typed character's code along with the key; 0.9 passes
+-- isrepeat instead and sends the character to love.textinput after it.
 function compat.keypressed(key)
-	if not love.keypressed then
-		return
-	end
 	if era("0.7", "0.8") then
-		local unicode = #key == 1 and key:byte() or (key == "return" and 13 or 0)
-		love.keypressed(key, unicode)
+		if love.keypressed then
+			local unicode = #key == 1 and key:byte() or (key == "return" and 13 or 0)
+			love.keypressed(key, unicode)
+		end
+	elseif era("0.9") then
+		if love.keypressed then
+			love.keypressed(key, false)
+		end
+		if love.textinput and #key == 1 then
+			love.textinput(key)
+		end
 	else
 		unsupported("keypressed")
 	end
@@ -65,6 +73,8 @@ function compat.keyreleased(key)
 	if era("0.7", "0.8") then
 		local unicode = #key == 1 and key:byte() or (key == "return" and 13 or 0)
 		love.keyreleased(key, unicode)
+	elseif era("0.9") then
+		love.keyreleased(key)
 	else
 		unsupported("keyreleased")
 	end
@@ -73,23 +83,23 @@ end
 -- Save what has been drawn so far this frame. Call at the end of love.draw,
 -- before the frame is presented. Verified 0.7, where encode() returns
 -- uncompressed TGA whatever format is asked for (the container converts it),
--- and 0.8, where encode(filename) writes a PNG itself.
+-- and 0.8 and 0.9, where encode(filename) writes a PNG itself.
 function compat.screenshot(name)
 	if compat.era == "0.7" then
 		local data = love.graphics.newScreenshot():encode("tga")
 		love.filesystem.write(name .. ".tga", data)
-	elseif compat.era == "0.8" then
+	elseif era("0.8", "0.9") then
 		love.graphics.newScreenshot():encode(name .. ".png")
 	else
 		unsupported("screenshot")
 	end
 end
 
--- Verified 0.7, 0.8.
+-- Verified 0.7, 0.8, 0.9.
 function compat.quit()
 	if compat.era == "0.7" then
 		love.event.push("q")
-	elseif compat.era == "0.8" then
+	elseif era("0.8", "0.9") then
 		love.event.quit()
 	else
 		unsupported("quit")
