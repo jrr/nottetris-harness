@@ -18,6 +18,7 @@ git clone --recursive https://github.com/jrr/nottetris-harness && cd nottetris-h
 ./run.sh gameA                # one scenario
 ./run.sh --game ../nottetris2 # another checkout of the game
 ./run.sh --update             # accept the current output as the baseline
+./run.sh --ref release-2011-06-20   # the game as it was at a tag, branch or commit
 ```
 
 Each scenario's output goes to `out/<love>/<scenario>/`: `log.txt`, and
@@ -25,12 +26,20 @@ Each scenario's output goes to `out/<love>/<scenario>/`: `log.txt`, and
 A scenario fails if the game errors, times out, or an `expect` step fails.
 Otherwise it passes when the output's checksums match `expected/<scenario>/`.
 
+`--ref` (for `run.sh` and `play.sh`) takes the game from a tag, branch or
+commit of the game repo instead, and runs it on the LÖVE version its
+`conf.lua` asks for: 0.7.2 if it doesn't say. The baselines only describe the
+current game, so these runs check behavior only: nothing errors, every
+`expect` passes. Each finished port is tagged in the game repo (e.g.
+`release-2011-06-20` for the original), so earlier versions stay playable:
+`./play.sh --ref release-2011-06-20`.
+
 ## Playing by hand
 
 ```
 ./play.sh                     # VNC, same LÖVE version and game as run.sh
 ./play.sh --web               # in the browser, with sound
-./play.sh --love 0.7.2 --game ../nottetris2
+./play.sh --ref release-2011-06-20   # an earlier version of the game
 ./play.sh --stop
 ```
 
@@ -58,6 +67,7 @@ Both listen on localhost only.
 | `lua/harness_compat.lua` | everything that differs between LÖVE versions |
 | `scenarios/*.lua` | the scenarios; step format at the top of `harness_main.lua` |
 | `expected/` | baselines, and `love-version`, the version they were made with |
+| `lib/ref.sh` | `--ref`: export the game at a ref, find the LÖVE version it wants |
 | `probe/` | reports which APIs a LÖVE version has |
 
 ## Reviewing a port

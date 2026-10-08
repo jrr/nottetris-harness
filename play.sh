@@ -2,10 +2,12 @@
 # Plays the game by hand. The game runs in the same Linux container image as
 # the scenarios, shown either over VNC (default) or in a browser with sound.
 #
-#   ./play.sh [--web] [--love VERSION] [--game DIR]
+#   ./play.sh [--web] [--love VERSION] [--game DIR] [--ref REF]
 #   ./play.sh --stop
 #
-# VERSION and DIR default as in run.sh. Everything listens on localhost only.
+# VERSION, DIR and REF work as in run.sh: --ref release-2011-06-20 plays the
+# original release on the LÖVE version it was made for. Everything listens on
+# localhost only.
 #
 # VNC: macOS Screen Sharing opens on the game (password "love"). No sound.
 # Stops when the game quits.
@@ -20,9 +22,12 @@
 set -u
 cd "$(dirname "$0")"
 ROOT=$(pwd)
+. lib/ref.sh
 LOVE=$(cat expected/love-version 2>/dev/null)
 GAME=$ROOT/game
 WEB=0
+REF=
+LOVE_GIVEN=
 SELKIES=ghcr.io/selkies-project/selkies/base:2.0.0-ubuntu26.04
 
 stop() {
@@ -32,8 +37,9 @@ stop() {
 
 while [ $# -gt 0 ]; do
 	case $1 in
-		--love) LOVE=$2; shift 2 ;;
+		--love) LOVE=$2; LOVE_GIVEN=1; shift 2 ;;
 		--game) GAME=$(cd "$2" && pwd); shift 2 ;;
+		--ref) REF=$2; shift 2 ;;
 		--web) WEB=1; shift ;;
 		--stop) stop; exit 0 ;;
 		*) echo "unknown argument: $1" >&2; exit 1 ;;
@@ -49,6 +55,12 @@ wait_for() { # seconds, command...
 	done
 	return 1
 }
+
+if [ -n "$REF" ]; then
+	GAME=$(extract_ref "$GAME" "$REF") || exit 1
+	[ -n "$LOVE_GIVEN" ] || LOVE=$(game_love "$GAME")
+	echo "Playing $REF"
+fi
 
 docker build -q -f "docker/love-$LOVE.Dockerfile" -t "nottetris-love:$LOVE" docker > /dev/null || exit 1
 stop
