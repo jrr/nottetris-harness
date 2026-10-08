@@ -4,12 +4,11 @@
 #
 #   ./run.sh [--love VERSION] [--game DIR] [--ref REF] [--update] [scenario...]
 #
-# VERSION defaults to the one the baselines were made with
-# (expected/love-version). DIR defaults to game/, the jrr/nottetris2
+# VERSION defaults to the one the game asks for in its conf.lua (t.version;
+# 0.7.2 if it doesn't say). DIR defaults to game/, the jrr/nottetris2
 # submodule; pass another checkout to test work in progress there.
 #
-# --ref plays the game as it was at a tag, branch or commit of DIR's repo,
-# on the LÖVE version it asks for in conf.lua (unless --love says otherwise).
+# --ref plays the game as it was at a tag, branch or commit of DIR's repo.
 # The baselines are only for the current game, so these runs only check that
 # nothing errors and every expect step passes: e.g. that the latest harness
 # still works with --ref release-2011-06-20.
@@ -26,7 +25,7 @@ cd "$(dirname "$0")"
 ROOT=$(pwd)
 . lib/ref.sh
 BASELINE_LOVE=$(cat expected/love-version 2>/dev/null)
-LOVE=$BASELINE_LOVE
+LOVE=
 GAME=$ROOT/game
 UPDATE=0
 REF=
@@ -46,19 +45,18 @@ if [ ${#SCENARIOS[@]} -eq 0 ]; then
 	SCENARIOS=($(ls scenarios | sed 's/\.lua$//'))
 	ALL=1
 fi
-OUT=$LOVE
 if [ -n "$REF" ]; then
 	if [ $UPDATE -eq 1 ]; then
 		echo "--update only makes baselines for the current game, not a --ref" >&2
 		exit 1
 	fi
 	GAME=$(extract_ref "$GAME" "$REF") || exit 1
-	[ -n "$LOVE_GIVEN" ] || LOVE=$(game_love "$GAME")
+fi
+[ -n "$LOVE_GIVEN" ] || LOVE=$(game_love "$GAME")
+OUT=$LOVE
+if [ -n "$REF" ]; then
 	OUT=ref-$(basename "$GAME" | sed 's/^\.ref-//; s/\.[^.]*$//')
 	echo "$REF on LÖVE $LOVE: checking behavior only, not baselines"
-elif [ -z "$LOVE" ]; then
-	echo "No baselines yet: pass --love VERSION" >&2
-	exit 1
 elif [ "$LOVE" != "$BASELINE_LOVE" ]; then
 	if [ $UPDATE -eq 1 ] && [ $ALL -eq 0 ]; then
 		echo "Baselines are from LÖVE $BASELINE_LOVE: moving them to $LOVE means updating every scenario, so don't name any" >&2

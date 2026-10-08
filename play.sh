@@ -6,9 +6,10 @@
 #   ./play.sh [--web | --mac] [--love VERSION] [--game DIR] [--ref REF]
 #   ./play.sh --stop
 #
-# VERSION, DIR and REF work as in run.sh: --ref release-2011-06-20 plays the
-# original release on the LÖVE version it was made for. Everything listens on
-# localhost only.
+# VERSION, DIR and REF work as in run.sh: the LÖVE version is the one the
+# game asks for unless --love says otherwise, so --ref release-2011-06-20
+# plays the original release on the LÖVE version it was made for. Everything
+# listens on localhost only.
 #
 # VNC: macOS Screen Sharing opens on the game (password "love"). No sound.
 # Stops when the game quits.
@@ -30,7 +31,7 @@ set -u
 cd "$(dirname "$0")"
 ROOT=$(pwd)
 . lib/ref.sh
-LOVE=$(cat expected/love-version 2>/dev/null)
+LOVE=
 GAME=$ROOT/game
 WEB=0
 MAC=0
@@ -67,9 +68,9 @@ wait_for() { # seconds, command...
 
 if [ -n "$REF" ]; then
 	GAME=$(extract_ref "$GAME" "$REF") || exit 1
-	[ -n "$LOVE_GIVEN" ] || LOVE=$(game_love "$GAME")
 	echo "Playing $REF"
 fi
+[ -n "$LOVE_GIVEN" ] || LOVE=$(game_love "$GAME")
 
 if [ $MAC -eq 1 ]; then
 	if [ "$LOVE" = 0.7.2 ]; then

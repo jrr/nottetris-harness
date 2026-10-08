@@ -26,13 +26,14 @@ Each scenario's output goes to `out/<love>/<scenario>/`: `log.txt`, and
 A scenario fails if the game errors, times out, or an `expect` step fails.
 Otherwise it passes when the output's checksums match `expected/<scenario>/`.
 
+Both `run.sh` and `play.sh` run the game on the LÖVE version its `conf.lua`
+asks for (0.7.2 if it doesn't say), unless `--love` says otherwise.
+
 `--ref` (for `run.sh` and `play.sh`) takes the game from a tag, branch or
-commit of the game repo instead, and runs it on the LÖVE version its
-`conf.lua` asks for: 0.7.2 if it doesn't say. The baselines only describe the
-current game, so these runs check behavior only: nothing errors, every
-`expect` passes. Each finished port is tagged in the game repo (e.g.
-`release-2011-06-20` for the original), so earlier versions stay playable:
-`./play.sh --ref release-2011-06-20`.
+commit of the game repo instead; a branch can be one that's only on GitHub.
+The baselines only describe the current game, so these runs check behavior
+only: nothing errors, every `expect` passes. Each finished port is tagged,
+so earlier versions stay playable: see [Milestones](#milestones).
 
 ## Playing by hand
 
@@ -62,6 +63,18 @@ Both listen on localhost only.
   0.7.2's build is 32-bit and can't run on current macOS, so the original
   release needs one of the container modes above.
 
+### Milestones
+
+Each finished port is tagged in both repos. `--ref` plays the game at a tag
+on the LÖVE version it was made for, and the current harness runs them all
+(`./run.sh --ref <tag>` checks one).
+
+| Tag | LÖVE | Play | |
+|---|---|---|---|
+| `release-2011-06-20` | 0.7.2 | `./play.sh --web --ref release-2011-06-20` | The original release (game repo only). No `--mac`. |
+| `love-0.8.0` | 0.8.0 | `./play.sh --mac --ref love-0.8.0` | Box2D 2.2. |
+| `love-0.9.2` | 0.9.2 | `./play.sh --mac --ref love-0.9.2` | Box2D 2.3, SDL2. |
+
 ## Layout
 
 | Path | |
@@ -75,7 +88,7 @@ Both listen on localhost only.
 | `lua/harness_compat.lua` | everything that differs between LÖVE versions |
 | `scenarios/*.lua` | the scenarios; step format at the top of `harness_main.lua` |
 | `expected/` | baselines, and `love-version`, the version they were made with |
-| `lib/ref.sh` | `--ref`: export the game at a ref, find the LÖVE version it wants |
+| `lib/ref.sh` | `--ref`: export the game at a ref; the LÖVE version a game wants |
 | `probe/` | reports which APIs a LÖVE version has |
 
 ## Reviewing a port
@@ -105,3 +118,5 @@ Merge both once the pictures look right, then point `game/` back at `main`.
 3. Teach `harness_compat.lua` the version's differences. It refuses to run on
    versions it hasn't been checked against.
 4. Run the scenarios. Expect failures until the game is ported too.
+5. Once both PRs are merged, tag `love-<version>` in both repos and add it
+   to [Milestones](#milestones).
