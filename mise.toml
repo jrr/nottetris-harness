@@ -1,0 +1,12 @@
+# LÖVE's own macOS builds, for ./play.sh --mac. `mise install` fetches them
+# all. LÖVE before 11.4 is Intel-only and runs under Rosetta; 0.7.2's build is
+# 32-bit and can't run on current macOS at all (use ./play.sh without --mac).
+# Asset names changed over the years, so each version names its own.
+# The first one listed is the `love` on PATH inside this directory.
+[tools]
+"github:love2d/love" = [
+	{ version = "0.8.0", asset_pattern = "love-0.8.0-macosx-ub.zip", bin_path = "love.app/Contents/MacOS" },
+	{ version = "0.9.2", asset_pattern = "love-0.9.2-macosx-x64.zip", bin_path = "love.app/Contents/MacOS" },
+	{ version = "0.10.2", asset_pattern = "love-0.10.2-macosx-x64.zip", bin_path = "love.app/Contents/MacOS" },
+	{ version = "11.5", asset_pattern = "love-11.5-macos.zip", bin_path = "love.app/Contents/MacOS" },
+]

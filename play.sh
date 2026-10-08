@@ -1,8 +1,9 @@
 #!/bin/bash
 # Plays the game by hand. The game runs in the same Linux container image as
-# the scenarios, shown either over VNC (default) or in a browser with sound.
+# the scenarios, shown either over VNC (default) or in a browser with sound;
+# or with --mac, in LÖVE's own macOS build.
 #
-#   ./play.sh [--web] [--love VERSION] [--game DIR] [--ref REF]
+#   ./play.sh [--web | --mac] [--love VERSION] [--game DIR] [--ref REF]
 #   ./play.sh --stop
 #
 # VERSION, DIR and REF work as in run.sh: --ref release-2011-06-20 plays the
@@ -19,6 +20,12 @@
 # only reachable from this machine. The game starts once the page has
 # connected: Selkies only creates the sound output it streams when a browser
 # connects. Downloads a 2.4 GB image the first time.
+#
+# --mac: runs the game in LÖVE's macOS build for VERSION, installed by mise
+# (see mise.toml; `mise install` once). Native window and sound, and Intel-only
+# versions run under Rosetta. Not for 0.7.2, whose build can't run on current
+# macOS. Saves go where that LÖVE version keeps them on macOS, not into the
+# containers' throwaway save directories.
 set -u
 cd "$(dirname "$0")"
 ROOT=$(pwd)
@@ -26,6 +33,7 @@ ROOT=$(pwd)
 LOVE=$(cat expected/love-version 2>/dev/null)
 GAME=$ROOT/game
 WEB=0
+MAC=0
 REF=
 LOVE_GIVEN=
 SELKIES=ghcr.io/selkies-project/selkies/base:2.0.0-ubuntu26.04
@@ -41,6 +49,7 @@ while [ $# -gt 0 ]; do
 		--game) GAME=$(cd "$2" && pwd); shift 2 ;;
 		--ref) REF=$2; shift 2 ;;
 		--web) WEB=1; shift ;;
+		--mac) MAC=1; shift ;;
 		--stop) stop; exit 0 ;;
 		*) echo "unknown argument: $1" >&2; exit 1 ;;
 	esac
@@ -60,6 +69,20 @@ if [ -n "$REF" ]; then
 	GAME=$(extract_ref "$GAME" "$REF") || exit 1
 	[ -n "$LOVE_GIVEN" ] || LOVE=$(game_love "$GAME")
 	echo "Playing $REF"
+fi
+
+if [ $MAC -eq 1 ]; then
+	if [ "$LOVE" = 0.7.2 ]; then
+		echo "LÖVE 0.7.2's macOS build is 32-bit and can't run on current macOS: use ./play.sh or ./play.sh --web" >&2
+		exit 1
+	fi
+	app=$(mise where "github:love2d/love@$LOVE" 2> /dev/null)/love.app
+	if [ ! -x "$app/Contents/MacOS/love" ]; then
+		echo "LÖVE $LOVE isn't installed: run mise install (and add $LOVE to mise.toml if it isn't there)" >&2
+		exit 1
+	fi
+	echo "LÖVE $LOVE (macOS) running $GAME"
+	exec "$app/Contents/MacOS/love" "$GAME"
 fi
 
 docker build -q -f "docker/love-$LOVE.Dockerfile" -t "nottetris-love:$LOVE" docker > /dev/null || exit 1

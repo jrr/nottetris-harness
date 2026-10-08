@@ -39,6 +39,7 @@ current game, so these runs check behavior only: nothing errors, every
 ```
 ./play.sh                     # VNC, same LÖVE version and game as run.sh
 ./play.sh --web               # in the browser, with sound
+./play.sh --mac               # in LÖVE's own macOS build (after `mise install`)
 ./play.sh --ref release-2011-06-20   # an earlier version of the game
 ./play.sh --stop
 ```
@@ -54,6 +55,12 @@ Both listen on localhost only.
   display and sound server in its own container, which the game's container
   connects to, so the version images need nothing for it. The game starts
   once the tab has connected. Downloads a 2.4 GB image the first time.
+- **`--mac`**: runs the game in LÖVE's own macOS build of the right version,
+  with a native window and sound. [mise](https://mise.jdx.dev) installs those
+  builds from LÖVE's GitHub releases (`mise install`, once; the versions are
+  in `mise.toml`). Before 11.4 they're Intel-only and run under Rosetta.
+  0.7.2's build is 32-bit and can't run on current macOS, so the original
+  release needs one of the container modes above.
 
 ## Layout
 
@@ -63,6 +70,7 @@ Both listen on localhost only.
 | `docker/love-<version>.Dockerfile` | LÖVE built for Xvfb and software rendering |
 | `docker/entry.sh` | runs in the container: play the game, collect its save files |
 | `docker/play.*` | VNC layer on top of any version's image, for `play.sh` (`--web` needs none) |
+| `mise.toml` | LÖVE's macOS builds, for `play.sh --mac` |
 | `lua/harness_main.lua` | fixed clock, seed and keyboard; plays the scenario steps |
 | `lua/harness_compat.lua` | everything that differs between LÖVE versions |
 | `scenarios/*.lua` | the scenarios; step format at the top of `harness_main.lua` |
