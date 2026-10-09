@@ -1,14 +1,74 @@
-# nottetris-harness
+# Not Tetris 2, revived
 
-Plays [Not Tetris 2](https://github.com/jrr/nottetris2) headless from scripted
-scenarios on any LÖVE version, saving screenshots and game state. It's for
-porting the game, released on LÖVE 0.7.2, to newer engine versions one step
-at a time, with something that checks every step.
+**[Play it in your browser →](https://jrr.github.io/nottetris2-revived/)**
 
-The game itself is not modified: the harness is added to a copy of it at run
-time.
+![Pieces tilted and stacked in a tower, with sliced fragments at the bottom](expected/gameover/01_failing.png)
 
-## Running
+[Not Tetris 2](https://stabyourself.net/nottetris2/) is Tetris where the pieces
+are physical objects. They don't snap to a grid: they fall, tip over, slide and
+pile up however they land. A row clears once it's filled enough, slicing
+through whatever pieces are in it.
+
+It was made by Maurice Guégan ([Stabyourself.net](https://stabyourself.net))
+in 2011, for version 0.7.2 of the [LÖVE](https://love2d.org) game engine, which
+current versions of LÖVE can't run. This project ports it forward, one engine
+version at a time, to LÖVE 11.5, and from there to the web.
+
+## Controls
+
+| | Keys |
+|---|---|
+| Move | ← → |
+| Drop faster | ↓ |
+| Rotate | Z (counterclockwise), X (clockwise) |
+| Pause | Enter |
+| Back to the menu | Esc |
+
+Two players (2PLY on the title screen) share a keyboard: player 1 uses A D S
+to move and G H to rotate, and player 2 uses the arrow keys and numpad 1 and 2.
+
+In the browser, click the page to turn on sound. It runs a little slower than
+the desktop version, and high scores are saved in your browser.
+
+## Playing on your computer
+
+Install [LÖVE 11.5](https://love2d.org), then:
+
+```
+git clone --recursive https://github.com/jrr/nottetris2-revived
+love nottetris2-revived/game
+```
+
+## How it's organized
+
+- [jrr/nottetris2](https://github.com/jrr/nottetris2) is the game: a fork of
+  the original release, changed only as much as each engine version needs.
+  It's the `game/` submodule here.
+- This repo is everything around it: the web version, and the test harness
+  that checked every step of the port.
+
+Each finished port is tagged, so every stage, the original 2011 release
+included, can still be played on the engine it was made for: see
+[Milestones](#milestones).
+
+## Credits
+
+Not Tetris 2 is by Maurice Guégan, released under the
+[WTFPL](game/LICENSE.txt). The web version uses
+[2dengine's love.js](https://github.com/2dengine/love.js), which builds on
+ports of LÖVE to the web by David Khachaturov and Tanner Rogalsky.
+
+## Porting harness
+
+The rest of this page is for working on the port.
+
+The harness plays the game headless from scripted scenarios on any LÖVE
+version, saving screenshots and game state. It's for porting the game to
+newer engine versions one step at a time, with something that checks every
+step. The game itself is not modified: the harness is added to a copy of it
+at run time.
+
+### Running the scenarios
 
 Needs Docker. Each LÖVE version's image builds from source on first use, which takes a few minutes.
 
@@ -35,7 +95,7 @@ The baselines only describe the current game, so these runs check behavior
 only: nothing errors, every `expect` passes. Each finished port is tagged,
 so earlier versions stay playable: see [Milestones](#milestones).
 
-## Playing by hand
+### Playing by hand
 
 ```
 ./play.sh                     # VNC, same LÖVE version and game as run.sh
@@ -67,7 +127,7 @@ Both listen on localhost only.
   0.7.2's build is 32-bit and can't run on current macOS, so the original
   release needs one of the container modes above.
 
-### Milestones
+#### Milestones
 
 Each finished port is tagged in both repos. `--ref` plays the game at a tag
 on the LÖVE version it was made for, and the current harness runs them all
@@ -83,7 +143,7 @@ on the LÖVE version it was made for, and the current harness runs them all
 | `love-11.4` | 11.4 | `./play.sh --mac --ref love-11.4` | First native macOS arm64 build; harness on LuaJIT 2.1. |
 | `love-11.5` | 11.5 | `./play.sh --mac --ref love-11.5` | Current stable. |
 
-## Layout
+### Layout
 
 | Path | |
 |---|---|
@@ -102,7 +162,7 @@ on the LÖVE version it was made for, and the current harness runs them all
 | `lib/fetch-ci-build.sh` | an unreleased LÖVE's macOS build from CI, for `play.sh --mac` |
 | `probe/` | reports which APIs a LÖVE version has |
 
-## Reviewing a port
+### Reviewing a port
 
 Physics changes between engine versions (Box2D 2.0 in LÖVE 0.7.2, 2.2 in 0.8,
 2.3 from 0.9), so screenshots won't match across versions, and they don't need
@@ -121,7 +181,7 @@ version shows every screenshot as a before/after image diff on GitHub:
 
 Merge both once the pictures look right, then point `game/` back at `main`.
 
-## Adding a LÖVE version
+### Adding a LÖVE version
 
 1. `docker/love-<version>.Dockerfile`, starting from the 0.7.2 one.
 2. Run the probe against it (command at the top of `probe/main.lua`) and
