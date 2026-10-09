@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- Page for 2dengine's love.js player (mise run web). Their
+     style.css stretches the canvas to the window; this keeps it 800x720,
+     the game's window size, scaled to fit and centred. n=1 skips the player's
+     IndexedDB package cache, which would otherwise keep serving an old build. -->
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Not Tetris 2</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+      #canvas {
+        width: min(100vw, 100vh * 800 / 720);
+        height: auto;
+        aspect-ratio: 800 / 720;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <div id="spinner" class="pending"></div>
+    <script src="player.js?g=nottetris.love&n=1"></script>
+  </body>
+</html>

@@ -91,7 +91,7 @@ on the LÖVE version it was made for, and the current harness runs them all
 | `docker/love-<version>.Dockerfile` | LÖVE built for Xvfb and software rendering |
 | `docker/entry.sh` | runs in the container: play the game, collect its save files |
 | `docker/play.*` | VNC layer on top of any version's image, for `play.sh` (`--web` needs none) |
-| `mise.toml` | LÖVE's macOS builds, for `play.sh --mac` |
+| `mise.toml` | LÖVE's macOS builds, for `play.sh --mac`; `mise run love-file` builds `out/nottetris.love`; `mise run web` plays it in a browser (2dengine's love.js) |
 | `lua/harness_main.lua` | fixed clock, seed and keyboard; plays the scenario steps |
 | `lua/harness_compat.lua` | everything that differs between LÖVE versions |
 | `scenarios/*.lua` | the scenarios; step format at the top of `harness_main.lua` |
