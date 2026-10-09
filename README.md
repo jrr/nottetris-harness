@@ -13,7 +13,7 @@ time.
 Needs Docker. Each LÖVE version's image builds from source on first use, which takes a few minutes.
 
 ```
-git clone --recursive https://github.com/jrr/nottetris-harness && cd nottetris-harness
+git clone --recursive https://github.com/jrr/nottetris2-revived && cd nottetris2-revived
 ./run.sh                      # every scenario, compared to the baselines
 ./run.sh gameA                # one scenario
 ./run.sh --game ../nottetris2 # another checkout of the game
@@ -91,12 +91,14 @@ on the LÖVE version it was made for, and the current harness runs them all
 | `docker/love-<version>.Dockerfile` | LÖVE built for Xvfb and software rendering |
 | `docker/entry.sh` | runs in the container: play the game, collect its save files |
 | `docker/play.*` | VNC layer on top of any version's image, for `play.sh` (`--web` needs none) |
-| `mise.toml` | LÖVE's macOS builds, for `play.sh --mac`; `mise run love-file` builds `out/nottetris.love`; `mise run web` plays it in a browser (2dengine's love.js) |
+| `mise.toml` | LÖVE's macOS builds, for `play.sh --mac`; `mise run love-file` builds `out/nottetris.love`; `mise run web` plays it in a browser |
 | `lua/harness_main.lua` | fixed clock, seed and keyboard; plays the scenario steps |
 | `lua/harness_compat.lua` | everything that differs between LÖVE versions |
 | `scenarios/*.lua` | the scenarios; step format at the top of `harness_main.lua` |
 | `expected/` | baselines, and `love-version`, the version they were made with |
 | `lib/ref.sh` | `--ref`: export the game at a ref; the LÖVE version a game wants |
+| `lib/build-web.sh` | the game in a browser (2dengine's love.js), for `mise run web` and Pages |
+| `.github/workflows/pages.yml` | publishes that to GitHub Pages on every push to main |
 | `lib/fetch-ci-build.sh` | an unreleased LÖVE's macOS build from CI, for `play.sh --mac` |
 | `probe/` | reports which APIs a LÖVE version has |
 
