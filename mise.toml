@@ -8,5 +8,6 @@
 	{ version = "0.8.0", asset_pattern = "love-0.8.0-macosx-ub.zip", bin_path = "love.app/Contents/MacOS" },
 	{ version = "0.9.2", asset_pattern = "love-0.9.2-macosx-x64.zip", bin_path = "love.app/Contents/MacOS" },
 	{ version = "0.10.2", asset_pattern = "love-0.10.2-macosx-x64.zip", bin_path = "love.app/Contents/MacOS" },
+	{ version = "11.3", asset_pattern = "love-11.3-macos.zip", bin_path = "love.app/Contents/MacOS" },
 	{ version = "11.5", asset_pattern = "love-11.5-macos.zip", bin_path = "love.app/Contents/MacOS" },
 ]

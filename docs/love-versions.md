@@ -29,7 +29,7 @@ Official Linux binaries were Ubuntu .deb packages for i386/amd64 (armhf from
 0.10.2), then x86_64 AppImages from 11.0. None are arm64. The harness builds
 LÖVE from source in an arm64 Linux container instead, so the macOS column only
 matters for playing the game by hand. Building from source is verified for
-0.7.2, 0.8.0, 0.9.2 and 0.10.2 (on Ubuntu 16.04).
+0.7.2, 0.8.0, 0.9.2, 0.10.2 and 11.3 (on Ubuntu 16.04).
 
 ## Breaking changes that touch this game
 
@@ -106,15 +106,34 @@ harness actually hits.
 
 ### 11.0
 
+Checked on 11.3, the last release before 11.4's LuaJIT change.
+
+- As on 0.10, a `conf.lua` with an older `t.version` gets the compatibility
+  warning and hangs harness runs (verified).
 - **Colors are 0–1 instead of 0–255.** Every `setColor` and
-  `setBackgroundColor` call changes.
-- `love.audio.newSource` needs an explicit type (`"static"` / `"stream"`), and
-  the audio API changed "drastically"; `love.audio.pause` and `resume`
-  (both used by the game) are among the changes.
-- `love.graphics.newScreenshot` removed; `captureScreenshot` is asynchronous
-  (harness).
-- `love.errhand` renamed to `love.errorhandler` (harness).
-- `love.filesystem.exists` deprecated in favour of `getInfo`.
+  `setBackgroundColor` call changes; values above 1 are clamped (verified).
+  So do ImageData's `getPixel` and `setPixel`, which the game uses to tint
+  and cut pieces (verified). Two of the game's colours render one level
+  higher in green than on 0.10.2 (the source images are a level lower
+  still); nothing else in the screenshots changes (verified).
+- `World:update` steps Box2D with 8 velocity and 3 position iterations by
+  default, where every earlier version used 8 and 6 (verified in LÖVE's
+  source). Pieces settle differently; `world:update(dt, 8, 6)` gives
+  exactly 0.10.2's physics (verified).
+- `newImageFont` no longer takes an Image, only a filename, ImageData or
+  Rasterizer; the filter is set on the Font instead (verified).
+- `love.audio.newSource` needs an explicit type (`"static"` / `"stream"`)
+  (verified). `love.audio.resume` is gone; `love.audio.pause()` returns the
+  sources it paused, to pass to `love.audio.play` (verified).
+- `love.graphics.newScreenshot` removed. `captureScreenshot(filename)` writes
+  a PNG once the frame is presented, before the next update (harness;
+  verified).
+- `love.errhand` renamed to `love.errorhandler` (harness; verified).
+- Key events are unchanged from 0.10 (verified).
+- `love.filesystem.exists` deprecated in favour of `getInfo`; both exist on
+  11.3, but calling a deprecated function prints a warning across the bottom
+  of the game's window (verified).
+- The macOS build is still Intel-only.
 
 ### 11.4
 
