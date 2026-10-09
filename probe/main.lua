@@ -59,6 +59,12 @@
 --
 -- Findings on 11.5 (LuaJIT 2.1 at 11.5's release, "2.1.1700008891"):
 --   the same as 11.4.
+--
+-- Findings on 12.0 (unreleased; main at b7daef0, Debian's LuaJIT):
+--   love.keyboard.hasTextInput() is false at startup (true on 11.5): SDL3
+--   only sends textinput after love.keyboard.setTextInput(true).
+--   The window flag display is now displayindex, and highdpi is gone.
+--   Otherwise as 11.5. SDL3 complains that XDG_RUNTIME_DIR isn't set; harmless.
 local function p(...) print(...) io.stdout:flush() end
 local function major_minor_at_least(major, minor)
 	if not love.getVersion then return false end
