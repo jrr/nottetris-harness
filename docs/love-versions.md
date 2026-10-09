@@ -29,7 +29,7 @@ Official Linux binaries were Ubuntu .deb packages for i386/amd64 (armhf from
 0.10.2), then x86_64 AppImages from 11.0. None are arm64. The harness builds
 LÖVE from source in an arm64 Linux container instead, so the macOS column only
 matters for playing the game by hand. Building from source is verified for
-0.7.2, 0.8.0, 0.9.2, 0.10.2, 11.3 and 11.4 (on Ubuntu 16.04).
+0.7.2, 0.8.0, 0.9.2, 0.10.2, 11.3, 11.4 and 11.5 (on Ubuntu 16.04).
 
 ## Breaking changes that touch this game
 
@@ -145,13 +145,20 @@ Checked on 11.3, the last release before 11.4's LuaJIT change.
 - Built against plain Lua, 11.4 renders every scenario byte for byte like
   11.3 (verified).
 
+### 11.5
+
+- No API changes the game or harness hit. LuaJIT is updated (fixing
+  `pairs` behaviour) and the JIT compiler is off by default on Apple
+  Silicon. Every scenario renders byte for byte like 11.4 (verified).
+
 ## Lua runtime
 
 0.9 onwards prefer LuaJIT, and LÖVE's own builds bundle it on most
 platforms. Ubuntu 16.04 has no arm64 LuaJIT package, so the harness's images
 up to 11.3 are built `--with-lua=lua5.1` (the probe reports `jit` as nil).
-From 11.4 the image builds LuaJIT 2.1 from source, from the v2.1 branch as
-it was at 11.4's release, so the harness runs what players run.
+From 11.4 the images build LuaJIT 2.1 from source, from the v2.1 branch as
+it was at that LÖVE version's release, so the harness runs what players
+run.
 
 The difference that shows is `math.random`: LuaJIT has its own generator,
 so the same seed deals different pieces than plain Lua does (verified:

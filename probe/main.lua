@@ -56,6 +56,9 @@
 --   jit.version is "LuaJIT 2.1.0-beta3". Bare LuaJIT 2.1 has no math.mod or
 --   string.gfind, but LÖVE 11.4 adds them back as aliases. Everything else
 --   matches 11.3.
+--
+-- Findings on 11.5 (LuaJIT 2.1 at 11.5's release, "2.1.1700008891"):
+--   the same as 11.4.
 local function p(...) print(...) io.stdout:flush() end
 local function major_minor_at_least(major, minor)
 	if not love.getVersion then return false end
