@@ -26,29 +26,12 @@ zip -9 -qr ../out/nottetris.love . -x '.git*' '*.DS_Store'
 echo out/nottetris.love
 """
 
-# `mise run web`: plays the game in a browser at http://localhost:8000, in
-# 2dengine's love.js player (https://github.com/2dengine/love.js): LÖVE 11.5
-# compiled to WebAssembly, running plain Lua 5.1 rather than LuaJIT. It runs
-# the .love as is, so this just puts it next to the player's files, pinned to
-# a commit, with our own page (lib/love-js-index.html). The player's docs ask
-# for cross-origin isolation headers, but it runs fine on a plain static
-# server without them.
+# `mise run web`: plays the game in a browser at http://localhost:8000 (see
+# lib/build-web.sh).
 [tasks.web]
-depends = ["love-file"]
 dir = "{{config_root}}"
 run = """
-commit=9355186de22db13bd88bf2a0db75d2925647d036
-player=out/love.js-2dengine-$commit
-if [ ! -d "$player" ]; then
-	mkdir -p "$player.tmp"
-	curl -fsSL "https://codeload.github.com/2dengine/love.js/tar.gz/$commit" | tar -xz -C "$player.tmp" --strip-components=1
-	mv "$player.tmp" "$player"
-fi
-rm -rf out/web
-mkdir out/web
-cp -R "$player"/11.5 "$player"/lua "$player"/player.js "$player"/style.css "$player"/nogame.love out/web/
-cp lib/love-js-index.html out/web/index.html
-cp out/nottetris.love out/web/
+lib/build-web.sh
 echo "http://localhost:8000"
 python3 -m http.server -b 127.0.0.1 -d out/web 8000
 """
