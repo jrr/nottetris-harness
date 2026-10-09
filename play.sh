@@ -78,6 +78,7 @@ if [ $MAC -eq 1 ]; then
 		exit 1
 	fi
 	app=$(mise where "github:love2d/love@$LOVE" 2> /dev/null)/love.app
+	[ -x "$app/Contents/MacOS/love" ] || app=builds/$LOVE/love.app #unreleased: lib/fetch-ci-build.sh
 	if [ ! -x "$app/Contents/MacOS/love" ]; then
 		echo "LÖVE $LOVE isn't installed: run mise install (and add $LOVE to mise.toml if it isn't there)" >&2
 		exit 1
