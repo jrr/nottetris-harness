@@ -51,6 +51,11 @@
 --   love.audio.resume is gone (love.audio.pause returns the sources it
 --   paused, for love.audio.play). love.filesystem.getInfo is new; exists
 --   remains. math.mod still exists, as this build is plain Lua 5.1.
+--
+-- Findings on 11.4 (built with LuaJIT 2.1, as LÖVE's own 11.4 builds are):
+--   jit.version is "LuaJIT 2.1.0-beta3". Bare LuaJIT 2.1 has no math.mod or
+--   string.gfind, but LÖVE 11.4 adds them back as aliases. Everything else
+--   matches 11.3.
 local function p(...) print(...) io.stdout:flush() end
 local function major_minor_at_least(major, minor)
 	if not love.getVersion then return false end
