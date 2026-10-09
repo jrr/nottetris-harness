@@ -60,6 +60,10 @@ Both listen on localhost only.
   with a native window and sound. [mise](https://mise.jdx.dev) installs those
   builds from LÖVE's GitHub releases (`mise install`, once; the versions are
   in `mise.toml`). Before 11.4 they're Intel-only and run under Rosetta.
+  Unreleased versions aren't GitHub releases, so mise can't install them:
+  `lib/fetch-ci-build.sh 12.0 <commit>` downloads LÖVE's CI build of that
+  commit into `builds/` instead (needs `gh`; GitHub deletes CI builds after
+  90 days).
   0.7.2's build is 32-bit and can't run on current macOS, so the original
   release needs one of the container modes above.
 
@@ -93,6 +97,7 @@ on the LÖVE version it was made for, and the current harness runs them all
 | `scenarios/*.lua` | the scenarios; step format at the top of `harness_main.lua` |
 | `expected/` | baselines, and `love-version`, the version they were made with |
 | `lib/ref.sh` | `--ref`: export the game at a ref; the LÖVE version a game wants |
+| `lib/fetch-ci-build.sh` | an unreleased LÖVE's macOS build from CI, for `play.sh --mac` |
 | `probe/` | reports which APIs a LÖVE version has |
 
 ## Reviewing a port

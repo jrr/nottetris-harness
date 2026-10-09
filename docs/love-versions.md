@@ -23,13 +23,15 @@ Only the first release of each line breaks compatibility; the point releases
 | 11.0 – 11.3 | Mysterious Mysteries | 2018-04 – 2019-10 | 2.3.2 | x86_64 | no; Rosetta (*unverified*) |
 | 11.4 | Mysterious Mysteries | 2022-01-02 | 2.3.2 | x86_64 + arm64 | yes |
 | 11.5 | Mysterious Mysteries | 2023-12-03 | 2.3.2 | x86_64 + arm64 | yes (current stable) |
-| 12.0 | – | unreleased | – | – | in development on `main` |
+| 12.0 | Bestest Friend | unreleased | 2.4.1 | x86_64 + arm64 (CI builds) | yes; in development on `main` |
 
 Official Linux binaries were Ubuntu .deb packages for i386/amd64 (armhf from
 0.10.2), then x86_64 AppImages from 11.0. None are arm64. The harness builds
 LÖVE from source in an arm64 Linux container instead, so the macOS column only
 matters for playing the game by hand. Building from source is verified for
-0.7.2, 0.8.0, 0.9.2, 0.10.2, 11.3, 11.4 and 11.5 (on Ubuntu 16.04).
+0.7.2, 0.8.0, 0.9.2, 0.10.2, 11.3, 11.4 and 11.5 (on Ubuntu 16.04), and for
+12.0 at `main`'s commit b7daef0 (on Debian 13: 12 needs SDL3, C++17 and
+CMake 3.19).
 
 ## Breaking changes that touch this game
 
@@ -150,6 +152,35 @@ Checked on 11.3, the last release before 11.4's LuaJIT change.
 - No API changes the game or harness hit. LuaJIT is updated (fixing
   `pairs` behaviour) and the JIT compiler is off by default on Apple
   Silicon. Every scenario renders byte for byte like 11.4 (verified).
+
+### 12.0 (unreleased)
+
+Checked at `main`'s commit b7daef0 (2026-09-20). The game's port lives on
+jrr/nottetris2's `port-12` branch until 12.0 is released.
+
+- As before, a `conf.lua` with an older `t.version` hangs harness runs
+  (verified).
+- **SDL3 starts with text input off**, where SDL2 had it on for desktops:
+  `love.keyboard.hasTextInput()` is false at startup (verified), so typed
+  text never reaches `love.textinput` until the game calls
+  `love.keyboard.setTextInput(true)`. The high score name entry broke this
+  way. The harness only delivers typed text while text input is on, so the
+  gameover scenario catches it.
+- **Box2D 2.3 → 2.4.1.** The same pieces settle slightly differently
+  (positions drift by thousandths at first); the gameover pile clears 2
+  lines instead of 4 (verified).
+- Shapes attach to a body again (`newRectangleShape(body, …)`), and
+  `newFixture` and `Fixture:getShape` are deprecated: the shape is its own
+  fixture, with all of Fixture's methods, and collision callbacks receive
+  shapes (verified in LÖVE's source; the deprecation notices show in the
+  game's window).
+- Key events, screenshots and the error handler work as on 11 (verified).
+  The window flag `display` is renamed `displayindex`.
+- The Debian 13 image's ImageMagick 7 encodes PNGs differently from
+  Ubuntu 16.04's ImageMagick 6, so identical frames get different
+  checksums than on earlier versions (verified: the menus are
+  pixel-identical to 11.5).
+- Its LuaJIT is Debian's (2.1.1737090214).
 
 ## Lua runtime
 
