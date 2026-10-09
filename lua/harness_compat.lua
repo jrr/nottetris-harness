@@ -53,6 +53,9 @@ end
 -- it; 0.10 adds the scancode (the same name, for the keys scenarios use) and
 -- calls the space bar "space" where earlier versions called it " ".
 local function text(key)
+	if love.keyboard.hasTextInput and not love.keyboard.hasTextInput() then
+		return nil --as SDL does: no textinput events while text input is off
+	end
 	if key == "space" then
 		return " "
 	end
@@ -69,8 +72,8 @@ function compat.keypressed(key)
 		if love.keypressed then
 			love.keypressed(key, false)
 		end
-		if love.textinput and #key == 1 then
-			love.textinput(key)
+		if love.textinput and text(key) then
+			love.textinput(text(key))
 		end
 	elseif era("0.10", "11") then
 		if love.keypressed then

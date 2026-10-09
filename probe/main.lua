@@ -96,6 +96,9 @@ function love.load()
 		p("api", f, has(f))
 	end
 	p("lua", _VERSION, "jit", tostring(jit and jit.version))
+	if love.keyboard.hasTextInput then
+		p("keyboard.hasTextInput", tostring(love.keyboard.hasTextInput()))
+	end
 	if love.audio then
 		local ok, res = pcall(love.audio.newSource, "probe.wav")
 		p("newSource without type", ok, tostring(res))
