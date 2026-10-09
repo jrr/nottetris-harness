@@ -76,6 +76,7 @@ on the LÖVE version it was made for, and the current harness runs them all
 | `love-0.9.2` | 0.9.2 | `./play.sh --mac --ref love-0.9.2` | Box2D 2.3, SDL2. |
 | `love-0.10.2` | 0.10.2 | `./play.sh --mac --ref love-0.10.2` | Image fonts need `extraspacing`; borderless fullscreen. |
 | `love-11.3` | 11.3 | `./play.sh --mac --ref love-11.3` | Colors 0–1; 0.10's physics iterations kept. |
+| `love-11.4` | 11.4 | `./play.sh --mac --ref love-11.4` | First native macOS arm64 build; harness on LuaJIT 2.1. |
 
 ## Layout
 

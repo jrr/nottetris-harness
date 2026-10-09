@@ -1,12 +1,12 @@
 gamestate gameB
 score 900 level 0 lines 9
-body 1 kind 3 pos 224.000 167.080 angle 0.0000 vel 0.000 75.377
-body 2 kind 6 pos 329.365 543.282 angle 0.0108 vel -0.037 0.015
-body 3 kind 7 pos 196.689 541.528 angle -0.7897 vel -0.003 0.001
-body 4 kind 2 pos 173.892 518.390 angle -0.7918 vel -0.009 0.003
-body 5 kind 3 pos 196.167 472.278 angle 0.7757 vel -0.015 0.004
-body 6 kind 6 pos 121.185 456.841 angle -2.3726 vel -0.003 0.002
-body 7 kind 2 pos 321.255 462.662 angle 1.5834 vel -0.100 0.019
-body 8 kind 4 pos 270.604 450.749 angle 0.7803 vel -0.056 0.049
-body 9 kind 4 pos 222.396 407.700 angle -0.7940 vel -0.012 0.012
-body 10 kind 5 pos 158.375 380.794 angle -0.8042 vel -0.013 0.002
+body 1 kind 3 pos 224.000 220.713 angle 0.0000 vel 0.000 88.942
+body 2 kind 3 pos 324.168 551.820 angle 0.3817 vel 0.000 0.000
+body 3 kind 1 pos 202.324 559.487 angle -0.0011 vel 0.000 0.000
+body 4 kind 1 pos 211.138 527.010 angle -0.0015 vel 0.000 0.000
+body 5 kind 2 pos 211.143 489.096 angle -0.4652 vel 0.000 0.000
+body 6 kind 6 pos 118.482 498.124 angle -2.1956 vel 0.000 0.000
+body 7 kind 7 pos 172.767 432.289 angle -1.0447 vel 0.000 0.000
+body 8 kind 3 pos 327.111 483.511 angle 3.5213 vel 0.000 0.000
+body 9 kind 4 pos 328.393 434.842 angle 2.7670 vel 0.000 0.000
+body 10 kind 7 pos 263.127 416.516 angle 0.7867 vel 0.000 0.000
